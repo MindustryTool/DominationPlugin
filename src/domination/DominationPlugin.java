@@ -50,11 +50,11 @@ public class DominationPlugin extends Plugin {
 
             for (var core : team.cores()) {
                 // Smallest core size is 3
-                int points = (core.block.size - 3) * CORE_PER_SECOND;
+                int points = (core.block.size - 2) * CORE_PER_SECOND;
                 int newPoint = teamPoints.getOrDefault(team, 0) + points;
                 teamPoints.put(team, newPoint);
 
-                Call.label("+" + points, 0.5f, core.x + Mathf.range(4f), core.y + Mathf.range(4f));
+                Call.label("+" + points, 0.5f, core.x + Mathf.range(8f), core.y + Mathf.range(8f));
 
                 if (newPoint >= POINT_TO_WIN) {
                     Events.fire(new EventType.GameOverEvent(team));
