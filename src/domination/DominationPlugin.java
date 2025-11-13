@@ -53,7 +53,7 @@ public class DominationPlugin extends Plugin {
                 int newPoint = teamPoints.getOrDefault(team, 0) + points;
                 teamPoints.put(team, newPoint);
 
-                Call.label("+" + points, 1f, core.x + Mathf.range(4f), core.y + Mathf.range(4f));
+                Call.label("+" + points, 0.5f, core.x + Mathf.range(4f), core.y + Mathf.range(4f));
 
                 if (newPoint >= POINT_TO_WIN) {
                     Events.fire(new EventType.GameOverEvent(team));
