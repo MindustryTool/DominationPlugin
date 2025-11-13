@@ -3,6 +3,9 @@ on:
       branches:
         - 'master'
         - 'main'
+permissions:
+  contents: write
+  
 jobs:
    buildJar:
       runs-on: ubuntu-latest
