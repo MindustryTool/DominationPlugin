@@ -5,14 +5,14 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import arc.Events;
-import arc.scene.Group;
 import mindustry.Vars;
 import mindustry.game.EventType;
 import mindustry.game.Team;
 import mindustry.gen.Call;
-import mindustry.gen.Groups;
 import mindustry.mod.*;
 import arc.util.Align;
+import arc.util.CommandHandler;
+import arc.util.Log;
 import arc.util.Timer;
 
 public class DominationPlugin extends Plugin {
@@ -51,7 +51,12 @@ public class DominationPlugin extends Plugin {
 
             for (var core : team.cores()) {
                 int points = core.block.size * CORE_PER_SECOND;
-                teamPoints.put(team, teamPoints.getOrDefault(team, 0) + points);
+                int newPoint = teamPoints.getOrDefault(team, 0) + points;
+                teamPoints.put(team, newPoint);
+
+                if (newPoint >= POINT_TO_WIN) {
+                    Events.fire(new EventType.GameOverEvent(team));
+                }
             }
         }
     }
@@ -69,5 +74,25 @@ public class DominationPlugin extends Plugin {
 
     private void resetPoints() {
         teamPoints.clear();
+    }
+
+    public void registerServerCommands(CommandHandler handler) {
+        handler.register("point", "[team] [amount]", "Add point to team", (agrs) -> {
+            try {
+                for (Team team : Team.all) {
+                    if (team.name != agrs[0]) {
+                        continue;
+                    }
+
+                    int amount = Integer.parseInt(agrs[1]);
+                    int newPoint = teamPoints.getOrDefault(team, 0) + amount;
+                    teamPoints.put(team, newPoint);
+                    updatePointPanel();
+                }
+
+            } catch (Exception e) {
+                Log.err(e);
+            }
+        });
     }
 }
