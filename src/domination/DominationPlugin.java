@@ -25,6 +25,8 @@ public class DominationPlugin extends Plugin {
 
     private static final ConcurrentHashMap<Team, Integer> teamPoints = new ConcurrentHashMap<>();
 
+    private static int secondPassed = 0;
+
     private static final class Session {
         private final Team team;
 
@@ -42,6 +44,7 @@ public class DominationPlugin extends Plugin {
                 addPoint();
                 updatePointPanel();
                 checkSession();
+                secondPassed++;
             }
 
         }, 0, 1);
@@ -146,6 +149,17 @@ public class DominationPlugin extends Plugin {
 
     private void updatePointPanel() {
         StringBuilder content = new StringBuilder("Point to win: " + POINT_TO_WIN + "\n");
+        int minutes = secondPassed / 60;
+        int hours = minutes / 60;
+        content.append("Time passed: ");
+
+        if (hours > 0) {
+            content.append(hours).append("h ");
+        }
+        if (minutes > 0) {
+            content.append(minutes % 60).append("m ");
+        }
+        content.append(secondPassed % 60).append("s\n");
 
         for (var entry : teamPoints.entrySet().stream()
                 .sorted(Comparator.<Entry<Team, Integer>>comparingInt(a -> a.getValue()).reversed()).toList()) {
@@ -160,7 +174,7 @@ public class DominationPlugin extends Plugin {
         Call.infoPopup(content.toString(), 1.05f, Align.right | Align.center, 0, 0, 0, 0);
     }
 
-    private void checkSession(){
+    private void checkSession() {
         for (var player : Groups.player) {
             if (!sessions.containsKey(player.uuid())) {
                 sessions.put(player.uuid(), new Session(player.team()));
@@ -171,6 +185,7 @@ public class DominationPlugin extends Plugin {
     private void reset() {
         teamPoints.clear();
         sessions.clear();
+        secondPassed = 0;
     }
 
     public void registerServerCommands(CommandHandler handler) {
