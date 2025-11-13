@@ -1,0 +1,7 @@
+{
+    "name": "Domination",
+    "author": "Yuii",
+    "main": "domination.DominationPlugin",
+    "description": "Domination",
+    "version": 1.0
+}
