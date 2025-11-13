@@ -10,6 +10,7 @@ import mindustry.Vars;
 import mindustry.game.EventType;
 import mindustry.game.Team;
 import mindustry.gen.Call;
+import mindustry.gen.Groups;
 import mindustry.mod.*;
 import arc.util.Align;
 import arc.util.CommandHandler;
@@ -19,7 +20,7 @@ import arc.util.Timer;
 public class DominationPlugin extends Plugin {
 
     private static final int CORE_PER_SECOND = 1;
-    private static final int POINT_TO_WIN = 100_000;
+    private static final int POINT_TO_WIN = 300_000;
 
     private static final ConcurrentHashMap<Team, Integer> teamPoints = new ConcurrentHashMap<>();
 
@@ -40,6 +41,36 @@ public class DominationPlugin extends Plugin {
         Events.on(EventType.WorldLoadEvent.class, e -> {
             resetPoints();
         });
+
+        Events.on(EventType.PlayerJoin.class, event -> {
+            if (event.player.team() == Team.malis) {
+                int leastPlayer = Integer.MAX_VALUE;
+                Team leastPlayerTeam = null;
+
+                for (var team : Team.all) {
+                    if (team == null || team == Team.malis) {
+                        continue;
+                    }
+
+                    int players = 0;
+                    for (var player : Groups.player) {
+                        if (player.team() == team) {
+                            players++;
+                        }
+                    }
+
+                    if (players < leastPlayer) {
+                        leastPlayer = players;
+                        leastPlayerTeam = team;
+                    }
+                }
+
+                if (leastPlayerTeam != null) {
+                    event.player.team(leastPlayerTeam);
+                }
+
+            }
+        });
     }
 
     private void addPoint() {
@@ -49,8 +80,7 @@ public class DominationPlugin extends Plugin {
             }
 
             for (var core : team.cores()) {
-                // Smallest core size is 3
-                int points = (core.block.size - 2) * CORE_PER_SECOND;
+                int points = core.block.size * CORE_PER_SECOND;
                 int newPoint = teamPoints.getOrDefault(team, 0) + points;
                 teamPoints.put(team, newPoint);
 
