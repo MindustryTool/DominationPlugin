@@ -44,11 +44,12 @@ public class DominationPlugin extends Plugin {
 
     private void addPoint() {
         for (Team team : Team.all) {
-            if (team == Team.derelict) {
+            if (team == Team.malis) {
                 continue;
             }
 
             for (var core : team.cores()) {
+                // Smallest core size is 3
                 int points = (core.block.size - 3) * CORE_PER_SECOND;
                 int newPoint = teamPoints.getOrDefault(team, 0) + points;
                 teamPoints.put(team, newPoint);
