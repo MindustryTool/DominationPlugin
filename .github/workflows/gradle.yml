@@ -30,8 +30,8 @@ jobs:
          - uses: "marvinpinto/action-automatic-releases@latest"
            with:
               repo_token: "${{ secrets.GITHUB_TOKEN }}"
-              automatic_release_tag: "loader"
+              automatic_release_tag: "latest"
               prerelease: true
-              title: "Loeader"
+              title: "DominationPlugin"
               files: |
                  build/libs/domination.jar
