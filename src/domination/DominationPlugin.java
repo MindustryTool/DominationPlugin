@@ -24,15 +24,13 @@ public class DominationPlugin extends Plugin {
 
     @Override
     public void init() {
-        Events.on(EventType.ClientLoadEvent.class, e -> {
-            Timer.schedule(() -> {
-                if (Vars.state.isPlaying()) {
-                    addPoint();
-                    updatePointPanel();
-                }
+        Timer.schedule(() -> {
+            if (Vars.state.isPlaying()) {
+                addPoint();
+                updatePointPanel();
+            }
 
-            }, 0, 1);
-        });
+        }, 0, 1);
 
         Events.on(EventType.GameOverEvent.class, e -> {
             resetPoints();
