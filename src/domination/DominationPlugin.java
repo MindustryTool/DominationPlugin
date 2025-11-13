@@ -47,20 +47,27 @@ public class DominationPlugin extends Plugin {
             handlePlayerJoin(event);
         });
 
-        Events.on(EventType.BlockDestroyEvent.class, event -> {
+        Events.on(EventType.BuildingBulletDestroyEvent.class, event -> {
             handleBlockDestroy(event);
         });
     }
 
-    private void handleBlockDestroy(EventType.BlockDestroyEvent event) {
-        var building = event.tile.build;
-        if (building != null && building.team() != Team.malis && building.block != null && building.block instanceof CoreBlock) {
+    private void handleBlockDestroy(EventType.BuildingBulletDestroyEvent event) {
+        var building = event.build;
+        var bullet = event.bullet;
+
+        if (building != null && building.team() != Team.malis && building.block != null
+                && building.block instanceof CoreBlock) {
             int points = building.block.size * CORE_PER_SECOND * 100;
             int newPoint = teamPoints.getOrDefault(building.team(), 0) - points;
 
             teamPoints.put(building.team(), Math.max(0, newPoint));
 
             Call.infoMessage("Team " + building.team().name + " lost " + points + " points");
+
+            teamPoints.put(bullet.team(), teamPoints.getOrDefault(bullet.team(), 0) + points);
+
+            Call.infoMessage("Team " + bullet.team().name + " gained " + points + " points");
         }
     }
 
