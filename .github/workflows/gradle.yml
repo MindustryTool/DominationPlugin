@@ -1,3 +1,8 @@
+on:
+   push:
+      branches:
+        - 'master'
+        - 'main'
 jobs:
    buildJar:
       runs-on: ubuntu-latest
@@ -21,7 +26,6 @@ jobs:
            with:
               name: domination
               path: build/libs/domination.jar
-
 
          - uses: "marvinpinto/action-automatic-releases@latest"
            with:
