@@ -19,7 +19,7 @@ import arc.util.Timer;
 public class DominationPlugin extends Plugin {
 
     private static final int CORE_PER_SECOND = 1;
-    private static final int POINT_TO_WIN = 300_000;
+    private static final int POINT_TO_WIN = 100_000;
 
     private static final ConcurrentHashMap<Team, Integer> teamPoints = new ConcurrentHashMap<>();
 
@@ -49,7 +49,7 @@ public class DominationPlugin extends Plugin {
             }
 
             for (var core : team.cores()) {
-                int points = core.block.size * CORE_PER_SECOND;
+                int points = (core.block.size - 3) * CORE_PER_SECOND;
                 int newPoint = teamPoints.getOrDefault(team, 0) + points;
                 teamPoints.put(team, newPoint);
 
