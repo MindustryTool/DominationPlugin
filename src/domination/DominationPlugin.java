@@ -25,22 +25,33 @@ public class DominationPlugin extends Plugin {
 
     private static final ConcurrentHashMap<Team, Integer> teamPoints = new ConcurrentHashMap<>();
 
+    private static final class Session {
+        private final Team team;
+
+        public Session(Team team) {
+            this.team = team;
+        }
+    }
+
+    private static final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
+
     @Override
     public void init() {
         Timer.schedule(() -> {
             if (Vars.state.isPlaying()) {
                 addPoint();
                 updatePointPanel();
+                checkSession();
             }
 
         }, 0, 1);
 
         Events.on(EventType.GameOverEvent.class, e -> {
-            resetPoints();
+            reset();
         });
 
         Events.on(EventType.WorldLoadEvent.class, e -> {
-            resetPoints();
+            reset();
         });
 
         Events.on(EventType.PlayerJoin.class, event -> {
@@ -49,6 +60,10 @@ public class DominationPlugin extends Plugin {
 
         Events.on(EventType.BuildingBulletDestroyEvent.class, event -> {
             handleBlockDestroy(event);
+        });
+
+        Events.on(EventType.WorldLoadEvent.class, event -> {
+            sessions.clear();
         });
     }
 
@@ -72,6 +87,13 @@ public class DominationPlugin extends Plugin {
     }
 
     private void handlePlayerJoin(EventType.PlayerJoin event) {
+        if (sessions.containsKey(event.player.uuid())) {
+            var session = sessions.get(event.player.uuid());
+
+            event.player.team(session.team);
+            return;
+        }
+
         if (event.player.team() == Team.malis) {
             int leastPlayer = Integer.MAX_VALUE;
             Team leastPlayerTeam = null;
@@ -97,8 +119,9 @@ public class DominationPlugin extends Plugin {
             if (leastPlayerTeam != null) {
                 event.player.team(leastPlayerTeam);
             }
-
         }
+
+        sessions.put(event.player.uuid(), new Session(event.player.team()));
     }
 
     private void addPoint() {
@@ -137,8 +160,17 @@ public class DominationPlugin extends Plugin {
         Call.infoPopup(content.toString(), 1.05f, Align.right | Align.center, 0, 0, 0, 0);
     }
 
-    private void resetPoints() {
+    private void checkSession(){
+        for (var player : Groups.player) {
+            if (!sessions.containsKey(player.uuid())) {
+                sessions.put(player.uuid(), new Session(player.team()));
+            }
+        }
+    }
+
+    private void reset() {
         teamPoints.clear();
+        sessions.clear();
     }
 
     public void registerServerCommands(CommandHandler handler) {
