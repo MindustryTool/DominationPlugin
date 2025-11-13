@@ -21,7 +21,7 @@ import arc.util.Timer;
 public class DominationPlugin extends Plugin {
 
     private static final int CORE_PER_SECOND = 1;
-    private static final int POINT_TO_WIN = 300_000;
+    private static final int POINT_TO_WIN = 200_000;
 
     private static final ConcurrentHashMap<Team, Integer> teamPoints = new ConcurrentHashMap<>();
 
