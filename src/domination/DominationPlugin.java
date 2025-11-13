@@ -43,34 +43,54 @@ public class DominationPlugin extends Plugin {
         });
 
         Events.on(EventType.PlayerJoin.class, event -> {
-            if (event.player.team() == Team.malis) {
-                int leastPlayer = Integer.MAX_VALUE;
-                Team leastPlayerTeam = null;
-
-                for (var team : Vars.state.teams.getActive().map(t -> t.team)) {
-                    if (team == null || team == Team.malis) {
-                        continue;
-                    }
-
-                    int players = 0;
-                    for (var player : Groups.player) {
-                        if (player.team() == team) {
-                            players++;
-                        }
-                    }
-
-                    if (players < leastPlayer) {
-                        leastPlayer = players;
-                        leastPlayerTeam = team;
-                    }
-                }
-
-                if (leastPlayerTeam != null) {
-                    event.player.team(leastPlayerTeam);
-                }
-
-            }
+            handlePlayerJoin(event);
         });
+
+        Events.on(EventType.BlockDestroyEvent.class, event -> {
+            handleBlockDestroy(event);
+        });
+    }
+
+    private void handleBlockDestroy(EventType.BlockDestroyEvent event) {
+        var building = event.tile.build;
+        if (building != null && building.team() == Team.malis) {
+            int points = building.block.size * CORE_PER_SECOND * 100;
+            int newPoint = teamPoints.getOrDefault(building.team(), 0) - points;
+
+            teamPoints.put(building.team(), Math.max(0, newPoint));
+
+            Call.infoMessage("Team " + building.team().name + " lost " + points + " points");
+        }
+    }
+
+    private void handlePlayerJoin(EventType.PlayerJoin event) {
+        if (event.player.team() == Team.malis) {
+            int leastPlayer = Integer.MAX_VALUE;
+            Team leastPlayerTeam = null;
+
+            for (var team : Vars.state.teams.getActive().map(t -> t.team)) {
+                if (team == null || team == Team.malis) {
+                    continue;
+                }
+
+                int players = 0;
+                for (var player : Groups.player) {
+                    if (player.team() == team) {
+                        players++;
+                    }
+                }
+
+                if (players < leastPlayer) {
+                    leastPlayer = players;
+                    leastPlayerTeam = team;
+                }
+            }
+
+            if (leastPlayerTeam != null) {
+                event.player.team(leastPlayerTeam);
+            }
+
+        }
     }
 
     private void addPoint() {
