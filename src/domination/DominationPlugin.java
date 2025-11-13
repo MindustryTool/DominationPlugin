@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import arc.Events;
+import arc.math.Mathf;
 import mindustry.Vars;
 import mindustry.game.EventType;
 import mindustry.game.Team;
@@ -52,6 +53,8 @@ public class DominationPlugin extends Plugin {
                 int newPoint = teamPoints.getOrDefault(team, 0) + points;
                 teamPoints.put(team, newPoint);
 
+                Call.label("+" + points, 1f, core.x + Mathf.range(4f), core.y + Mathf.range(4f));
+
                 if (newPoint >= POINT_TO_WIN) {
                     Events.fire(new EventType.GameOverEvent(team));
                 }
@@ -64,10 +67,15 @@ public class DominationPlugin extends Plugin {
 
         for (var entry : teamPoints.entrySet().stream()
                 .sorted(Comparator.<Entry<Team, Integer>>comparingInt(a -> a.getValue()).reversed()).toList()) {
-            content.append(entry.getKey().name).append(": ").append(entry.getValue()).append("\n");
+            var team = entry.getKey();
+            var point = entry.getValue();
+            var percent = (float) point / POINT_TO_WIN * 100;
+            percent = Math.round(percent * 100.0f) / 100.0f;
+
+            content.append(team.coloredName()).append("[] ").append(point).append(" (").append(percent).append("%)\n");
         }
 
-        Call.infoPopupReliable(content.toString(), 1.05f, Align.right | Align.center, 0, 0, 0, 0);
+        Call.infoPopup(content.toString(), 1.05f, Align.right | Align.center, 0, 0, 0, 0);
     }
 
     private void resetPoints() {
