@@ -125,8 +125,8 @@ public class DominationPlugin extends Plugin {
     }
 
     private void addPoint() {
-        for (Team team : Team.all) {
-            if (team == Team.malis) {
+        for (Team team : Vars.state.teams.getActive().map(t -> t.team)) {
+            if (team == Team.malis || team == Team.derelict) {
                 continue;
             }
 
