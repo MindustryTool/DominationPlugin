@@ -53,7 +53,7 @@ public class DominationPlugin extends Plugin {
 
     private void handleBlockDestroy(EventType.BlockDestroyEvent event) {
         var building = event.tile.build;
-        if (building != null && building.team() == Team.malis) {
+        if (building != null && building.team() != Team.malis && building.block != null) {
             int points = building.block.size * CORE_PER_SECOND * 100;
             int newPoint = teamPoints.getOrDefault(building.team(), 0) - points;
 
