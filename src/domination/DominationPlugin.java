@@ -87,6 +87,9 @@ public class DominationPlugin extends Plugin {
                     int amount = Integer.parseInt(agrs[1]);
                     int newPoint = teamPoints.getOrDefault(team, 0) + amount;
                     teamPoints.put(team, newPoint);
+
+                    Log.info("Added @ points to team @", amount, team.name);
+
                     updatePointPanel();
                 }
 
