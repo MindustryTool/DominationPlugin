@@ -12,6 +12,7 @@ import mindustry.game.Team;
 import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.mod.*;
+import mindustry.world.blocks.storage.CoreBlock;
 import arc.util.Align;
 import arc.util.CommandHandler;
 import arc.util.Log;
@@ -53,7 +54,7 @@ public class DominationPlugin extends Plugin {
 
     private void handleBlockDestroy(EventType.BlockDestroyEvent event) {
         var building = event.tile.build;
-        if (building != null && building.team() != Team.malis && building.block != null) {
+        if (building != null && building.team() != Team.malis && building.block != null && building.block instanceof CoreBlock) {
             int points = building.block.size * CORE_PER_SECOND * 100;
             int newPoint = teamPoints.getOrDefault(building.team(), 0) - points;
 
