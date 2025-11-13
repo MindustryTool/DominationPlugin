@@ -47,7 +47,7 @@ public class DominationPlugin extends Plugin {
                 int leastPlayer = Integer.MAX_VALUE;
                 Team leastPlayerTeam = null;
 
-                for (var team : Team.all) {
+                for (var team : Vars.state.teams.getActive().map(t -> t.team)) {
                     if (team == null || team == Team.malis) {
                         continue;
                     }
