@@ -90,12 +90,12 @@ public class DominationPlugin extends Plugin {
     }
 
     private void handlePlayerJoin(EventType.PlayerJoin event) {
-        if (sessions.containsKey(event.player.uuid())) {
-            var session = sessions.get(event.player.uuid());
+        // if (sessions.containsKey(event.player.uuid())) {
+        //     var session = sessions.get(event.player.uuid());
 
-            event.player.team(session.team);
-            return;
-        }
+        //     event.player.team(session.team);
+        //     return;
+        // }
 
         if (event.player.team() == Team.malis) {
             int leastPlayer = Integer.MAX_VALUE;
